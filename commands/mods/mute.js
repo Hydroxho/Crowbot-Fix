@@ -65,7 +65,6 @@ module.exports = {
                         }
                     }, "Muterole");
 
-                   
                     message.guild.channels.cache.forEach(channel => {
                         channel.updateOverwrite(muterole, {
                             SEND_MESSAGES: false,
