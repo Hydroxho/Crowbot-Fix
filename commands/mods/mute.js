@@ -1,6 +1,5 @@
 const Discord = require("discord.js");
 const ms = require("ms");
-const cooldown = {};
 const db = require("quick.db");
 
 module.exports = {
@@ -13,6 +12,7 @@ module.exports = {
             if (db.get(`admin_${message.guild.id}_${role.id}`)) perm = true;
             if (db.get(`ownerp_${message.guild.id}_${role.id}`)) perm = true;
         });
+
         if (client.config.owner.includes(message.author.id) || db.get(`ownermd_${client.user.id}_${message.author.id}`) === true || perm) {
 
             async function mute(user, authorcooldown, muterole, time = null) {
@@ -36,9 +36,9 @@ module.exports = {
 
                 let Muted = await db.fetch(`mRole_${message.guild.id}`);
                 let muterole = message.guild.roles.cache.get(Muted) || 
-                               message.guild.roles.cache.find(role => role.name === `muet`) || 
-                               message.guild.roles.cache.find(role => role.name === `Muted`) || 
-                               message.guild.roles.cache.find(role => role.name === `Mute`);
+                               message.guild.roles.cache.find(role => role.name === 'muet') || 
+                               message.guild.roles.cache.find(role => role.name === 'Muted') || 
+                               message.guild.roles.cache.find(role => role.name === 'Mute');
 
                 var user = message.mentions.members.first() || message.guild.members.cache.get(args[0]);
                 if (!user) return message.channel.send(`Aucun membre trouvé pour: \`${args[0]}\``);
@@ -63,7 +63,7 @@ module.exports = {
                             name: 'muet',
                             permissions: []
                         }
-                    }, "Muterole");
+                    });
 
                     message.guild.channels.cache.forEach(channel => {
                         channel.updateOverwrite(muterole, {
@@ -71,7 +71,7 @@ module.exports = {
                             CONNECT: false,
                             ADD_REACTIONS: false,
                             SPEAK: false
-                        }, "Muterole");
+                        });
                     });
 
                     db.set(`mRole_${message.guild.id}`, `${muterole.id}`);
