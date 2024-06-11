@@ -1,22 +1,22 @@
 const Discord = require('discord.js');
 const db = require('quick.db');
-const { MessageEmbed } = require("discord.js");
 
 module.exports = {
     name: 'muterole',
     aliases: [],
     run: async (client, message, args, prefix, color) => {
-        let perm = "";
+        let perm = false;
         message.member.roles.cache.forEach(role => {
             if (db.get(`admin_${message.guild.id}_${role.id}`)) perm = true;
             if (db.get(`ownerp_${message.guild.id}_${role.id}`)) perm = true;
         });
+
         if (client.config.owner.includes(message.author.id) || db.get(`ownermd_${client.user.id}_${message.author.id}`) === true || perm) {
             let Muted = await db.fetch(`mRole_${message.guild.id}`);
             let muterole = message.guild.roles.cache.get(Muted) || 
-                           message.guild.roles.cache.find(role => role.name === `muet`) || 
-                           message.guild.roles.cache.find(role => role.name === `Muted`) || 
-                           message.guild.roles.cache.find(role => role.name === `Mute`);
+                           message.guild.roles.cache.find(role => role.name === 'muet') || 
+                           message.guild.roles.cache.find(role => role.name === 'Muted') || 
+                           message.guild.roles.cache.find(role => role.name === 'Mute');
 
             if (muterole) {
                 const embed = new Discord.MessageEmbed()
@@ -40,7 +40,6 @@ module.exports = {
                     });
 
                     embed2.setDescription(`Les permissions du rôle muet ont été mises à jour pour tous les salons.`);
-
                     message.channel.send(embed2);
                 });
                 return;
@@ -50,28 +49,4 @@ module.exports = {
                 const embed = new Discord.MessageEmbed()
                     .setColor(color)
                     .setTitle(`Création d'un rôle muet`);
-                message.channel.send(embed).then(async m => {
-                    muterole = await message.guild.roles.create({
-                        data: {
-                            name: 'muet',
-                            permissions: []
-                        }
-                    });
-                    message.guild.channels.cache.forEach(channel => {
-                        channel.updateOverwrite(muterole, {
-                            SEND_MESSAGES: false,
-                            CONNECT: false,
-                            ADD_REACTIONS: false,
-                            SPEAK: false
-                        }, "Muterole");
-                    });
-                    db.set(`mRole_${message.guild.id}`, `${muterole.id}`);
-                    const e = new Discord.MessageEmbed()
-                        .setColor(color)
-                        .setDescription(`***Rôle muet créé :*** ${muterole}`);
-                    return m.edit("", e);
-                });
-            }
-        }
-    }
-}
+                message.channel.send(embed
